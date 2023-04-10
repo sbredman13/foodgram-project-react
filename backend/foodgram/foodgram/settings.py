@@ -140,3 +140,7 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 EMAIL_FROM = "no_reply@yamdb.praktikum"
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000'
+]

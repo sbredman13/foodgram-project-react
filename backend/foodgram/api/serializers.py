@@ -1,8 +1,8 @@
 from django.core.validators import MinValueValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, serializers
-
 from djoser.serializers import UserSerializer
+
 from api.fields import Base64ImageField
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
@@ -145,6 +145,30 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
         return value
 
+    def add_ingredients(self, recipe, ingredients):
+        ex_ids = RecipeIngredient.objects.filter(
+            recipe=recipe,
+            ingredient_id__in=[i['id'] for i in ingredients]
+        ).values_list('ingredient_id', flat=True)
+        recipe_ingredients = [
+            RecipeIngredient(
+                recipe=recipe,
+                ingredient=get_object_or_404(Ingredient, pk=ingredient["id"]),
+                amount=ingredient["amount"]
+            ) for ingredient in ingredients if ingredient['id'] not in ex_ids
+        ]
+        RecipeIngredient.objects.bulk_create(recipe_ingredients)
+
+        for ingredient in ingredients:
+            if ingredient['id'] in ex_ids:
+                amount = ingredient["amount"]
+                ingredient = get_object_or_404(Ingredient, pk=ingredient["id"])
+
+                RecipeIngredient.objects.filter(
+                    recipe=recipe,
+                    ingredient=ingredient
+                ).update(amount=amount)
+
     def create(self, validated_data):
         author = self.context.get("request").user
         tags = validated_data.pop("tags")
@@ -153,18 +177,12 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(author=author, **validated_data)
         recipe.tags.set(tags)
 
-        recipe_ingredients = [
-            RecipeIngredient(
-                recipe=recipe,
-                ingredient=get_object_or_404(Ingredient, pk=ingredient["id"]),
-                amount=ingredient["id"]
-            ) for ingredient in ingredients
-        ]
-        RecipeIngredient.objects.bulk_create(recipe_ingredients)
+        self.add_ingredients(recipe, ingredients)
 
         return recipe
 
     def update(self, instance, validated_data):
+        recipe = instance
         tags = validated_data.pop("tags", None)
         if tags is not None:
             instance.tags.set(tags)
@@ -173,15 +191,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         if ingredients is not None:
             instance.ingredients.clear()
 
-            for ingredient in ingredients:
-                amount = ingredient["amount"]
-                ingredient = get_object_or_404(Ingredient, pk=ingredient["id"])
-
-                RecipeIngredient.objects.update_or_create(
-                    recipe=instance,
-                    ingredient=ingredient,
-                    defaults={"amount": amount}
-                )
+            self.add_ingredients(recipe, ingredients)
 
         return super().update(instance, validated_data)
 

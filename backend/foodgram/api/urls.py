@@ -16,7 +16,7 @@ router_v1.register(r"users", UserViewSet, basename="users")
 
 urlpatterns = [
     path("api/users/set_password/", UserViewSet, name="set_password"),
-    path("auth/token/login/", get_tokens_for_user),
-    path("", include(router_v1.urls)),
-    path("auth/token/logout/", TokenDestroyView.as_view()),
+    path("auth/token/login/", get_tokens_for_user, name="login"),
+    path("", include(router_v1.urls),),
+    path("auth/token/logout/", TokenDestroyView.as_view(), name="logout"),
 ]

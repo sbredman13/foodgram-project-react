@@ -13,8 +13,7 @@ from api.serializers import (IngredientSerializer,
                              RecipeCreateUpdateSerializer, RecipeSerializer,
                              ShortRecipeSerializer, TagSerializer)
 from recipes.models import (Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag)
-from api.utils import FavoriteMixin
+                            ShoppingCart, Tag, Favorite)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -29,7 +28,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ("^name",)
 
 
-class RecipeViewSet(FavoriteMixin, viewsets.ModelViewSet):
+class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrAdminPermission,)
     filter_backends = (DjangoFilterBackend,)
@@ -41,42 +40,52 @@ class RecipeViewSet(FavoriteMixin, viewsets.ModelViewSet):
 
         return RecipeSerializer
 
-    @action(detail=True, methods=("post", "delete"))
-    def shopping_cart(self, request, pk=None):
+    def bace_recipe_action(self, request, pk, model, error):
         user = self.request.user
         recipe = get_object_or_404(Recipe, pk=pk)
 
         if self.request.method == "POST":
-            if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
-                return HttpResponseBadRequest("Рецепт уже в списке покупок.")
-
-            ShoppingCart.objects.create(user=user, recipe=recipe)
+            if model.objects.filter(user=user, recipe=recipe).exists():
+                return HttpResponseBadRequest(f"Рецепт уже в {error}.")
+            model.objects.create(user=user, recipe=recipe)
             serializer = ShortRecipeSerializer(
                 recipe,
                 context={"request": request}
             )
-
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if self.request.method == "DELETE":
-            if not ShoppingCart.objects.filter(
+            if not model.objects.filter(
                 user=user,
                 recipe=recipe
             ).exists():
                 return HttpResponseBadRequest(
-                    "Рецепта нет в списке покупок, либо он уже удален."
+                    f"Рецепта нет в {error}, либо он уже удален."
                 )
 
-            shopping_cart = get_object_or_404(
-                ShoppingCart,
+            favorite = get_object_or_404(
+                model,
                 user=user,
                 recipe=recipe
             )
-            shopping_cart.delete()
+            favorite.delete()
 
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(detail=True, methods=("post", "delete"))
+    def favorite(self, request, pk=None):
+        return self.bace_recipe_action(request, pk, Favorite, "избраном")
+
+    @action(detail=True, methods=("post", "delete"))
+    def shopping_cart(self, request, pk=None):
+        return self.bace_recipe_action(
+            request,
+            pk,
+            ShoppingCart,
+            "списке покупок"
+        )
 
     @action(
         detail=False,
