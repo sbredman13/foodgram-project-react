@@ -128,11 +128,12 @@ class RecipeIngredient(models.Model):
         verbose_name_plural = "Ингредиенты"
 
     constraints = (
-            models.UniqueConstraint(
-                fields=("name", "measurement_unit"), name="unique_ingredient"
-            ),
-        )
-    
+        models.UniqueConstraint(
+            fields=("name", "measurement_unit"),
+            name="unique_ingredient"
+        ),
+    )
+
     def __str__(self):
         return f"В рецепте {self.recipe} есть ингредиент {self.ingredient}"
 
