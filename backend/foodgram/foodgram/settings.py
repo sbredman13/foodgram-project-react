@@ -9,7 +9,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 SECRET_KEY = 'django-insecure-zw#%t(v%qg_9%j%@u33wq=^7_cq2&o-oc+5^&5n2+e0t$tjlg&'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
