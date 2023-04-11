@@ -107,10 +107,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ingredient = Ingredient.objects.get(pk=item["ingredient"])
             amount = item["count"]
             buy_list_text += (
-                f"{ingredient.name}, {amount} " f"{ingredient.measurement_unit}\n"
+                f"{ingredient.name}, {amount} "
+                f"{ingredient.measurement_unit}\n"
             )
 
         response = HttpResponse(buy_list_text, content_type="text/plain")
-        response["Content-Disposition"] = "attachment; filename=shopping-list.txt"
+        response[
+            "Content-Disposition"
+        ] = "attachment; filename=shopping-list.txt"
 
         return response
