@@ -31,8 +31,8 @@ jobs:
     needs: tests
     steps:
       - name: Install dependencies
-      run: |
-        cd backend/foodgram
+        run: |
+          cd backend/foodgram
 
       - name: Check out the repo
         uses: actions/checkout@v2 
