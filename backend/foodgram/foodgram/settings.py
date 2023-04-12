@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "django_filters",
     "rest_framework",
     "rest_framework.authtoken",
+    "djoser",
 ]
 
 MIDDLEWARE = [
@@ -116,9 +117,9 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = "users.User"
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
-}
+#SIMPLE_JWT = {
+    #"ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+#}
 
 DJOSER = {
     "LOGIN_FIELD": "email",
