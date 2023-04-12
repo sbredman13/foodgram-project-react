@@ -137,6 +137,6 @@ def get_tokens_for_user(request):
     serializer = TokenSerializer(data=request.data)
     if serializer.is_valid():
         user = get_object_or_404(User, email=request.data["email"])
-        token = AccessToken.for_user(user)
-        return Response({"token": str(token)})
+        auth_token = AccessToken.for_user(user)
+        return Response({"auth_token": str(auth_token)})
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
