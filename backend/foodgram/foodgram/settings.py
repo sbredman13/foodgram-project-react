@@ -11,7 +11,7 @@ SECRET_KEY = 'django-insecure-zw#%t(v%qg_9%j%@u33wq=^7_cq2&o-oc+5^&5n2+e0t$tjlg&
 
 DEBUG = False
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS')
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', '*'), '*']
 
 INSTALLED_APPS = [
     "corsheaders",
