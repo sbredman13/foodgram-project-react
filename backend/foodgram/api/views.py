@@ -17,11 +17,13 @@ from recipes.models import (Ingredient, Recipe, RecipeIngredient,
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    pagination_class = None
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    pagination_class = None
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (filters.SearchFilter,)
