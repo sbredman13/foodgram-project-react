@@ -1,5 +1,4 @@
 import os
-# from datetime import timedelta
 
 from pathlib import Path
 
@@ -117,9 +116,6 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = "users.User"
 
-# SIMPLE_JWT = {
-# "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
-# }
 
 DJOSER = {
     "LOGIN_FIELD": "email",
