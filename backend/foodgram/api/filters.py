@@ -1,10 +1,19 @@
 from distutils.util import strtobool
 from django_filters import rest_framework
+from rest_framework.filters import SearchFilter
 
-from recipes.models import Favorite, Recipe, ShoppingCart, Tag
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 
 
 CHOICES_LIST = (("0", "False"), ("1", "True"))
+
+
+class IngredientSearch(SearchFilter):
+    search_param = 'name'
+
+    class Meta:
+        model = Ingredient
+        fields = ('name',)
 
 
 class RecipeFilter(rest_framework.FilterSet):
