@@ -2,7 +2,8 @@ https://github.com/sbredman13/foodgram-project-react/actions/workflows/foodgram_
 
 
 # "Продуктовый помощник" (Foodgram)
-бейдж workflow
+
+Проект достпуен по адресу: http://foodgramsbredman.myftp.org и 130.193.49.231
 
 ### Описание
 
