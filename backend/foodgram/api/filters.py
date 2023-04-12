@@ -9,11 +9,11 @@ CHOICES_LIST = (("0", "False"), ("1", "True"))
 
 
 class IngredientSearch(SearchFilter):
-    search_param = 'name'
+    search_param = "name"
 
     class Meta:
         model = Ingredient
-        fields = ('name',)
+        fields = ("name",)
 
 
 class RecipeFilter(rest_framework.FilterSet):
