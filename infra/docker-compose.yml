@@ -2,7 +2,7 @@ version: '3.3'
 services:
 
   frontend:
-    image: sbredman13/foodgram_frontend
+    image: sbredman13/foodgram_frontend:v1
     volumes:
       - ../frontend/:/app/result_build/
 
@@ -14,7 +14,7 @@ services:
       - .env
 
   backend:
-    image: sbredman13/foodgram
+    image: sbredman13/foodgram:v1
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
