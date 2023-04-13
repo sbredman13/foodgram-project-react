@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api.filters import IngredientSearch, RecipeFilter
+from api.paginations import CustomPagination
 from api.permissions import IsAuthorOrAdminPermission
 from api.serializers import (IngredientSerializer,
                              RecipeCreateUpdateSerializer, RecipeSerializer,
@@ -17,13 +18,11 @@ from recipes.models import (Ingredient, Recipe, RecipeIngredient,
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    pagination_class = None
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    pagination_class = None
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (IngredientSearch,)
@@ -31,6 +30,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    pagination_class = CustomPagination
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrAdminPermission,)
     filter_backends = (DjangoFilterBackend,)

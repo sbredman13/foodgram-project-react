@@ -8,13 +8,14 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from api.paginations import CustomPagination
 from users.models import Subscriptions, User
 from users.serializers import (CustomUserSerializer, SignupSerializer,
                                SubscriptionSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
-
+    pagination_class = CustomPagination
     queryset = User.objects.all()
     serializer_class = SignupSerializer
 
