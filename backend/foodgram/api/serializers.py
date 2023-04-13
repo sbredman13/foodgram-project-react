@@ -38,7 +38,7 @@ class CustomUserSerializer(UserSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = "__all__"
+        fields = ("id", "name", "measurement_unit",)
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -78,13 +78,19 @@ class CreateUpdateRecipeIngredientsSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     tags = TagSerializer(many=True)
-    ingredients = IngredientSerializer(many=True, read_only=True)
+    ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField(
         method_name="get_is_favorited"
     )
     is_in_shopping_cart = serializers.SerializerMethodField(
         method_name="get_is_in_shopping_cart"
     )
+
+    def get_ingredients(self, obj):
+        return RecipeIngredientsSerializer(
+            RecipeIngredient.objects.filter(recipe=obj).all(),
+            many=True,
+        ).data
 
     def get_is_favorited(self, obj):
         user = self.context["request"].user
